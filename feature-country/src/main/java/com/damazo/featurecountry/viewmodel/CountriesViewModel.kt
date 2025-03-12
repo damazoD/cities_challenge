@@ -34,10 +34,6 @@ class CountriesViewModel @Inject constructor(
         }
     }
 
-    fun countryPressed() {
-        //TODO(Change to Map Screen)
-    }
-
     fun favouritePressed() {
         //SaveFavourite
     }

@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.damazo.featurecountry.model.CountriesUiState
 import com.damazo.featurecountry.viewmodel.CountriesViewModel
 
 @ExperimentalMaterial3Api
@@ -114,25 +115,14 @@ fun CountriesScreen(
         }
     }
 
-    LazyColumn(
-        contentPadding = PaddingValues(
-            start = 16.dp,
-            top = 72.dp,
-            end = 16.dp,
-            bottom = 16.dp
-        ),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.semantics { traversalIndex = 1f },
-    ) {
-        val list = List(100) { "Text $it" }
-        items(count = list.size) {
-            Text(
-                text = list[it],
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-            )
-        }
+    when(uiState){
+        CountriesUiState.DataFound -> DataFoundView()
+        CountriesUiState.EmptyData -> EmptyDataView()
+        CountriesUiState.ErrorData -> ErrorDataView()
+        /*CountriesUiState.ErrorData -> SuccessfulFilterView {
+            //TODO(Change to MapScreen)
+        }*/
+        else -> Unit
     }
 }
 
