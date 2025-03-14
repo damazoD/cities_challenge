@@ -37,7 +37,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.damazo.featurecountry.model.CountriesUiState
+import com.damazo.featurecountry.model.CountriesUiState.*
 import com.damazo.featurecountry.viewmodel.CountriesViewModel
 
 @ExperimentalMaterial3Api
@@ -56,80 +56,83 @@ fun CountriesScreen(
             .fillMaxSize()
             .semantics { isTraversalGroup = true })
     {
-        SearchBar(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .semantics { traversalIndex = 0f },
-            inputField = {
-                SearchBarDefaults.InputField(
-                    query = text,
-                    onQueryChange = {
-                        text = it
-                    },
-                    onSearch = {
-                        expanded = false
-                    },
-                    expanded = expanded,
-                    onExpandedChange = {
-                        expanded = it
-                    },
-                    placeholder = {
-                        Text("Hinted search text")
-                    },
-                    leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = null)
-                    },
-                    trailingIcon = {
-                        Icon(Icons.Default.MoreVert, contentDescription = null)
-                    },
-                )
-            },
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-        ) {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                repeat(4) {
-                    val resultText = "Suggestion $it"
-                    ListItem(
-                        headlineContent = { Text(resultText) },
-                        supportingContent = { Text("Additional info") },
-                        leadingContent = {
-                            Icon(
-                                Icons.Filled.Star,
-                                contentDescription = null
+        when (uiState) {
+            is ErrorData -> ErrorDataView()
+            is Downloading -> DownloadProgressView()
+            else -> {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    SearchBar(
+                        modifier = Modifier
+                           // .align(Alignment.TopCenter)
+                            .semantics { traversalIndex = 0f },
+                        inputField = {
+                            SearchBarDefaults.InputField(
+                                query = text,
+                                onQueryChange = {
+                                    text = it
+                                },
+                                onSearch = {
+                                    expanded = false
+                                },
+                                expanded = expanded,
+                                onExpandedChange = {
+                                    expanded = it
+                                },
+                                placeholder = {
+                                    Text("Hinted search text")
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Search, contentDescription = null)
+                                },
+                                trailingIcon = {
+                                    Icon(Icons.Default.MoreVert, contentDescription = null)
+                                },
                             )
                         },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier = Modifier
-                            .clickable {
-                                text = resultText
-                                expanded = false
+                        expanded = expanded,
+                        onExpandedChange = { expanded = it },
+                    ) {
+                        Column(
+                            modifier = Modifier.verticalScroll(rememberScrollState())
+                        ) {
+                            repeat(4) {
+                                val resultText = "Suggestion $it"
+                                ListItem(
+                                    headlineContent = { Text(resultText) },
+                                    supportingContent = { Text("Additional info") },
+                                    leadingContent = {
+                                        Icon(
+                                            Icons.Filled.Star,
+                                            contentDescription = null
+                                        )
+                                    },
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                    modifier = Modifier
+                                        .clickable {
+                                            text = resultText
+                                            expanded = false
+                                        }
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                                )
                             }
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
+                        }
+                    }
+                    when (uiState) {
+                        is DataFound -> DataFoundView()
+                        is EmptyData -> EmptyDataView()
+                        is Filtering -> Unit //TODO(WIP)
+                        is SuccessfulFilter ->
+                            SuccessfulFilterView((uiState as SuccessfulFilter).countries) {
+                                //TODO(Change to MapScreen)
+                            }
+                        else -> Unit
+                    }
                 }
+
             }
         }
     }
-
-    when(uiState){
-        CountriesUiState.DataFound -> DataFoundView()
-        CountriesUiState.EmptyData -> EmptyDataView()
-        CountriesUiState.ErrorData -> ErrorDataView()
-        /*CountriesUiState.ErrorData -> SuccessfulFilterView {
-            //TODO(Change to MapScreen)
-        }*/
-        else -> Unit
-    }
-}
-
-@ExperimentalMaterial3Api
-@Composable
-fun SearchInputView(text: String, expanded: Boolean) {
-
 }
 
 @Preview
