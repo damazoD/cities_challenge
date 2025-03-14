@@ -2,6 +2,7 @@ package com.damazo.featurecountry.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.damazo.domain.usecase.DownloadCitiesUseCase
 import com.damazo.featurecountry.model.CitiesFilterUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -12,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CitiesFilterViewModel @Inject constructor(
-
+    val downloadCitiesUseCase: DownloadCitiesUseCase,
 ) : ViewModel() {
 
     private var _citiesFilterUiState:MutableStateFlow<CitiesFilterUiState> = MutableStateFlow(CitiesFilterUiState.Standby)
@@ -32,12 +33,9 @@ class CitiesFilterViewModel @Inject constructor(
         viewModelScope.launch {
             _citiesFilterUiState.value = CitiesFilterUiState.Downloading
             delay(3000)
+            //downloadCitiesUseCase()
             _citiesFilterUiState.value = CitiesFilterUiState.DataFound
         }
-    }
-
-    fun favouritePressed() {
-        //SaveFavourite
     }
 
     fun filterCountries(text: String) {

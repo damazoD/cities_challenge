@@ -23,3 +23,5 @@ rootProject.name = "Uala Challenge"
 include(":app")
 include(":feature-cities")
 include(":feature-map")
+include(":data")
+include(":domain")

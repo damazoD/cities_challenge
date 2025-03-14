@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.semantics
@@ -63,7 +64,7 @@ fun CountryItemView(city: City, onCountryPressed: (City) -> Unit) {
         ) {
             Text(
                 modifier = Modifier,
-                text = "${city.name}, ${city.country}",
+                text = city.displayName,
                 fontSize = 18.sp
             )
             Text(
@@ -72,10 +73,11 @@ fun CountryItemView(city: City, onCountryPressed: (City) -> Unit) {
                 fontSize = 14.sp
             )
         }
-        //val favouriteImage = R.drawable.heart.takeIf { country.isFavourite } ?: R.drawable.heart_outline
+        val favouriteImage = R.drawable.heart.takeIf { city.isFavourite } ?: R.drawable.heart_outline
         Image(
             modifier = Modifier.size(24.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.database_search),
+            imageVector = ImageVector.vectorResource(favouriteImage),
+            colorFilter = ColorFilter.tint(color = Color.Red),
             contentDescription = null
         )
     }
@@ -88,22 +90,19 @@ fun SuccessfulFilterViewPreview() {
         listOf(
             City(
                 "123",
-                name = "Mexico City",
-                country = "MX",
+                displayName = "Mexico City, MX",
                 isFavourite = true,
                 coordinate = Coordinate(latitude = 34.283333, longitude = 44.549999)
             ),
             City(
                 "123",
-                name = "Axutla",
-                country = "MX",
+                displayName = "Axutla, MX",
                 isFavourite = false,
                 coordinate = Coordinate(latitude = 34.283333, longitude = 44.549999)
             ),
             City(
                 "123",
-                name = "El chinal",
-                country = "MX",
+                displayName = "El chinal, MX",
                 isFavourite = true,
                 coordinate = Coordinate(latitude = 34.283333, longitude = 44.549999)
             ),
