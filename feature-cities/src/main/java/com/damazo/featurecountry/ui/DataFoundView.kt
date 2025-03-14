@@ -27,7 +27,9 @@ import androidx.compose.ui.unit.sp
 import com.damazo.featurecountry.R
 
 @Composable
-fun DataFoundView() {
+fun DataFoundView(
+    onButtonPressed:()->Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,7 +57,7 @@ fun DataFoundView() {
         Button(
             modifier = Modifier
                 .padding(top = 50.dp),
-            onClick = { }
+            onClick = onButtonPressed
         ) {
             Text(
                 modifier = Modifier
@@ -72,5 +74,7 @@ fun DataFoundView() {
 @Preview
 @Composable
 fun DataFoundViewPreview() {
-    DataFoundView()
+    DataFoundView{
+
+    }
 }

@@ -11,7 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/feature-country" />
+            <option value="$PROJECT_DIR$/feature-cities" />
             <option value="$PROJECT_DIR$/feature-map" />
           </set>
         </option>

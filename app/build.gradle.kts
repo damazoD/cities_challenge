@@ -45,8 +45,7 @@ android {
 
 dependencies {
 
-    implementation(project(path = ":feature-country"))
-
+    implementation(project(":feature-cities"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

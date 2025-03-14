@@ -1,14 +1,11 @@
 package com.damazo.featurecountry.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,10 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -37,19 +33,24 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.damazo.featurecountry.model.CountriesUiState.*
-import com.damazo.featurecountry.viewmodel.CountriesViewModel
+import com.damazo.featurecountry.model.CitiesFilterUiState.DataFound
+import com.damazo.featurecountry.model.CitiesFilterUiState.Downloading
+import com.damazo.featurecountry.model.CitiesFilterUiState.EmptyData
+import com.damazo.featurecountry.model.CitiesFilterUiState.ErrorData
+import com.damazo.featurecountry.model.CitiesFilterUiState.Filtering
+import com.damazo.featurecountry.model.CitiesFilterUiState.SuccessfulFilter
+import com.damazo.featurecountry.viewmodel.CitiesFilterViewModel
 
 @ExperimentalMaterial3Api
 @Composable
-fun CountriesScreen(
+fun CitiesFilterScreen(
     modifier: Modifier,
-    viewModel: CountriesViewModel = viewModel()
+    viewModel: CitiesFilterViewModel = viewModel()
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    val uiState by viewModel.countriesUiState.collectAsState()
+    val uiState by viewModel.citiesFilterUiState.collectAsState()
 
     Box(
         modifier = Modifier
@@ -119,7 +120,9 @@ fun CountriesScreen(
                         }
                     }
                     when (uiState) {
-                        is DataFound -> DataFoundView()
+                        is DataFound -> DataFoundView{
+                            viewModel.dataSourcePressed()
+                        }
                         is EmptyData -> EmptyDataView()
                         is Filtering -> Unit //TODO(WIP)
                         is SuccessfulFilter ->
@@ -138,6 +141,6 @@ fun CountriesScreen(
 @Preview
 @ExperimentalMaterial3Api
 @Composable
-fun CountriesScreenPreview() {
-    CountriesScreen(Modifier)
+fun CitiesFilterScreenPreview() {
+    CitiesFilterScreen(Modifier)
 }

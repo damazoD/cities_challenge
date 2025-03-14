@@ -26,12 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.damazo.featurecountry.R
 import com.damazo.featurecountry.model.Coordinate
-import com.damazo.featurecountry.model.Country
+import com.damazo.featurecountry.model.City
 
 @Composable
 fun SuccessfulFilterView(
-    countries: List<Country>,
-    onCountryPressed: (Country) -> Unit
+    countries: List<City>,
+    onCountryPressed: (City) -> Unit
 ) {
     LazyColumn(
         contentPadding = PaddingValues(24.dp),
@@ -51,7 +51,7 @@ fun SuccessfulFilterView(
 }
 
 @Composable
-fun CountryItemView(country: Country, onCountryPressed: (Country) -> Unit) {
+fun CountryItemView(city: City, onCountryPressed: (City) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -59,16 +59,16 @@ fun CountryItemView(country: Country, onCountryPressed: (Country) -> Unit) {
         Column(
             modifier = Modifier
                 .weight(1f)
-                .clickable { onCountryPressed(country) }
+                .clickable { onCountryPressed(city) }
         ) {
             Text(
                 modifier = Modifier,
-                text = "${country.name}, ${country.country}",
+                text = "${city.name}, ${city.country}",
                 fontSize = 18.sp
             )
             Text(
                 modifier = Modifier,
-                text = "${country.coordinate.latitude}, ${country.coordinate.longitude}",
+                text = "${city.coordinate.latitude}, ${city.coordinate.longitude}",
                 fontSize = 14.sp
             )
         }
@@ -86,21 +86,21 @@ fun CountryItemView(country: Country, onCountryPressed: (Country) -> Unit) {
 fun SuccessfulFilterViewPreview() {
     SuccessfulFilterView(
         listOf(
-            Country(
+            City(
                 "123",
                 name = "Mexico City",
                 country = "MX",
                 isFavourite = true,
                 coordinate = Coordinate(latitude = 34.283333, longitude = 44.549999)
             ),
-            Country(
+            City(
                 "123",
                 name = "Axutla",
                 country = "MX",
                 isFavourite = false,
                 coordinate = Coordinate(latitude = 34.283333, longitude = 44.549999)
             ),
-            Country(
+            City(
                 "123",
                 name = "El chinal",
                 country = "MX",

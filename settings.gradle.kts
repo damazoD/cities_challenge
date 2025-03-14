@@ -21,5 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Uala Challenge"
 include(":app")
-include(":feature-country")
+include(":feature-cities")
 include(":feature-map")
