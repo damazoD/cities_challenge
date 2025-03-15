@@ -3,7 +3,8 @@ package com.damazo.domain.repository
 import com.damazo.domain.model.City
 
 interface CitiesRepository {
-    fun downloadData()
-    fun searchCities(prefix:String): List<City>
-    fun saveFavourite(cityId: String)
+    suspend fun downloadData(): List<City>
+    suspend fun getSavedData(): List<City>
+    suspend fun searchCities(prefix: String): List<City>
+    suspend fun saveFavourite(cityId: Long, isFavourite: Boolean)
 }

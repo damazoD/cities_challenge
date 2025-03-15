@@ -1,6 +1,6 @@
-package com.damazo.domain.model
+package com.damazo.data.model
 
-class Coordinate(
+class CoordinatesEntity(
     val longitude: Double,
     val latitude: Double,
 )

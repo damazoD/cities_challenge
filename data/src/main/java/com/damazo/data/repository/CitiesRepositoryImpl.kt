@@ -1,45 +1,41 @@
 package com.damazo.data.repository
 
-import com.damazo.data.datasource.CitiesNetwork
-import com.damazo.data.datasource.CitiesStorage
-import com.damazo.data.model.CityEntity
-import com.damazo.data.model.CoordinateEntity
+import com.damazo.data.datasource.local.CityDao
+import com.damazo.data.datasource.remote.CitiesGistService
+import com.damazo.data.mapper.CityMapper
 import com.damazo.domain.model.City
-import com.damazo.domain.model.Coordinate
 import com.damazo.domain.repository.CitiesRepository
 import javax.inject.Inject
 
 class CitiesRepositoryImpl @Inject constructor(
-    private val citiesStorage: CitiesStorage,
-    private val citiesNetwork: CitiesNetwork,
+    private val remoteDataSource: CitiesGistService,
+    private val localDataSource: CityDao,
+    private val mapper: CityMapper,
 ) : CitiesRepository {
 
-    override fun downloadData() {
-        val cities = citiesNetwork.getAllCities().map {
-            CityEntity(
-                id = it.id,
-                name = it.name,
-                country = it.country,
-                coordinate = CoordinateEntity(it.coordinate.latitude, it.coordinate.longitude),
-                isFavourite = it.isFavourite,
-            )
+    override suspend fun downloadData(): List<City> {
+        val citiesEntity = remoteDataSource.getAllCities().getOrNull()?.mapNotNull {
+            mapper.mapToEntityModel(it)
         }
-        citiesStorage.saveAllCities(cities)
-    }
-
-    override fun searchCities(prefix: String): List<City> {
-        return citiesStorage.searchCities(prefix).map {
-            City(
-                id = it.id,
-                name = it.name,
-                country = it.country,
-                coordinate = Coordinate(it.coordinate.latitude, it.coordinate.longitude),
-                isFavourite = it.isFavourite,
-            )
+        return if (citiesEntity.isNullOrEmpty()) {
+            emptyList()
+        } else {
+            localDataSource.insertAll(citiesEntity)
+            citiesEntity.map {
+                mapper.mapToDomainModel(it)
+            }
         }
     }
 
-    override fun saveFavourite(cityId: String) {
-        citiesStorage.saveFavouriteCity(cityId)
+    override suspend fun getSavedData() = localDataSource.getAllCities().map {
+        mapper.mapToDomainModel(it)
+    }
+
+    override suspend fun searchCities(prefix: String) = localDataSource.searchBy(prefix).map {
+        mapper.mapToDomainModel(it)
+    }
+
+    override suspend fun saveFavourite(cityId: Long, isFavourite: Boolean) {
+        localDataSource.updateFavouriteCity(cityId, isFavourite)
     }
 }

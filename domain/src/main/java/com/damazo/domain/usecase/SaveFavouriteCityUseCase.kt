@@ -5,8 +5,7 @@ import com.damazo.domain.repository.CitiesRepository
 class SaveFavouriteCityUseCase(
     private val repository: CitiesRepository,
 ) {
-
-    operator fun invoke(id: String) {
-        return repository.saveFavourite(cityId = id)
+    suspend operator fun invoke(id: Long, isFavourite: Boolean) {
+        return repository.saveFavourite(id, isFavourite)
     }
 }
