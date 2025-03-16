@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -14,14 +15,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.damazo.featurecities.R
 import com.damazo.featurecities.model.City
+import com.damazo.featurecities.model.Coordinates
 import com.damazo.featurecities.viewmodel.CityDetailViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -37,12 +44,13 @@ fun CityMapScreen(
     city: City,
     onBackPressed: () -> Unit,
 ) {
-
-    val singapore = LatLng(city.coordinates!!.latitude, city.coordinates.longitude)
-    val singaporeMarkerState = rememberMarkerState(position = singapore)
+    val coordinates = LatLng(city.coordinates!!.latitude, city.coordinates.longitude)
+    val markerState = rememberMarkerState(position = coordinates)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
+        position = CameraPosition.fromLatLngZoom(coordinates, 10f)
     }
+    var isFavourite by remember { mutableStateOf(city.isFavourite) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,29 +62,30 @@ fun CityMapScreen(
                     IconButton(onClick = onBackPressed) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Localized description"
+                            contentDescription = stringResource(R.string.maps_back_button_description),
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
                 },
                 title = {
-                    Text(city.displayName)
+                    Text(text = city.displayName)
                 }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                city.isFavourite = !city.isFavourite
-                viewModel.saveFavouriteCity(city.id, city.isFavourite)
+                isFavourite = !isFavourite
+                viewModel.saveFavouriteCity(city.id, isFavourite)
             }) {
-                val favouriteImage =
-                    R.drawable.heart.takeIf { city.isFavourite } ?: R.drawable.heart_outline
+                val favouriteIcon = R.drawable.heart.takeIf { isFavourite } ?: R.drawable.heart_outline
                 Icon(
-                    imageVector = ImageVector.vectorResource(favouriteImage),
-                    contentDescription = "Set favourite",
+                    imageVector = ImageVector.vectorResource(favouriteIcon),
+                    contentDescription = stringResource(R.string.maps_favourite_button_description),
                     tint = Color.Red
                 )
             }
-        }
+        },
+        floatingActionButtonPosition = FabPosition.Center
     ) { innerPadding ->
         GoogleMap(
             modifier = Modifier
@@ -85,13 +94,12 @@ fun CityMapScreen(
             cameraPositionState = cameraPositionState
         ) {
             Marker(
-                state = singaporeMarkerState,
+                state = markerState,
                 title = city.displayName,
-                snippet = "Marker in Singapore"
+                snippet = city.displayCoordinates
             )
         }
     }
-
 }
 
 @ExperimentalMaterial3Api
@@ -103,9 +111,7 @@ fun PreviewMapScreen() {
             id = 123,
             displayName = "Mexico City, MX",
             isFavourite = true,
-            displayCoordinates = "34.283333, 44.549999",
-            coordinates = null,
+            coordinates = Coordinates(34.283333, 44.549999),
         )
     ) { }
 }
-

@@ -18,4 +18,7 @@
 
     <string name="data_found_description">La aplicación cuenta con datos guardados, cualquier busqueda será local</string>
     <string name="data_download_button">Descargar nuevamente</string>
+
+    <string name="maps_back_button_description">Regreso a la lista de ciudades</string>
+    <string name="maps_favourite_button_description">Guardar como favorito</string>
 </resources>

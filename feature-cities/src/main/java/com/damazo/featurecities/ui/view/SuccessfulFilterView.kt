@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.damazo.featurecities.R
 import com.damazo.featurecities.model.City
+import com.damazo.featurecities.model.Coordinates
 
 @Composable
 fun SuccessfulFilterView(
@@ -94,22 +95,19 @@ fun SuccessfulFilterViewPreview() {
                 id = 123,
                 displayName = "Mexico City, MX",
                 isFavourite = true,
-                displayCoordinates = "34.283333, 44.549999",
-                coordinates = null,
+                coordinates = Coordinates(34.283333, 44.549999),
             ),
             City(
                 id = 123,
                 displayName = "Axutla, MX",
                 isFavourite = false,
-                displayCoordinates = "34.283333, 44.549999",
-                coordinates = null,
+                coordinates = Coordinates(34.283333, 44.549999),
             ),
             City(
                 id = 123,
                 displayName = "El chinal, MX",
                 isFavourite = true,
-                displayCoordinates = "34.283333, 44.549999",
-                coordinates = null,
+                coordinates = Coordinates(34.283333, 44.549999),
             ),
         )
     ) { _ -> }

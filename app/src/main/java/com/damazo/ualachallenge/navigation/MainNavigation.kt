@@ -39,7 +39,6 @@ fun MainNavigation() {
                 city = City(
                     city.id,
                     city.displayName,
-                    "",
                     Coordinates(city.longitude, city.latitude),
                     city.isFavourite
                 ),

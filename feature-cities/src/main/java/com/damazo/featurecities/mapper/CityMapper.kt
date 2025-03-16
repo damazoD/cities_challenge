@@ -10,7 +10,6 @@ class CityMapper @Inject constructor() {
     fun mapToUiModel(cityModel: City) = CityUi(
         id = cityModel.id,
         displayName = "${cityModel.name}, ${cityModel.country}",
-        displayCoordinates = "${cityModel.coordinates?.latitude ?: "0"}, ${cityModel.coordinates?.longitude ?: "0"}",
         coordinates = if (cityModel.coordinates != null)
             Coordinates(
                 cityModel.coordinates!!.latitude,
