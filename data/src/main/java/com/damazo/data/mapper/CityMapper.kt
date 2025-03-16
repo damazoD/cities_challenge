@@ -15,22 +15,25 @@ class CityMapper @Inject constructor() {
         country = cityEntity.country,
         coordinates = if (cityEntity.coordinates != null)
             Coordinates(
-                cityEntity.coordinates.latitude,
-                cityEntity.coordinates.longitude
+                longitude = cityEntity.coordinates.longitude,
+                latitude = cityEntity.coordinates.latitude
             ) else null,
         isFavourite = cityEntity.isFavourite,
     )
 
     fun mapToEntityModel(cityRemote: CityRemote): CityEntity? {
         return if (cityRemote.id != null && cityRemote.name != null) {
+            val longitude = cityRemote.coordinates?.longitude
             val latitude = cityRemote.coordinates?.latitude
-            val longitude = cityRemote.coordinates?.latitude
             CityEntity(
                 id = cityRemote.id,
                 name = cityRemote.name,
                 country = cityRemote.country.orEmpty(),
                 coordinates = if (latitude != null && longitude != null)
-                    CoordinatesEntity(longitude, latitude)
+                    CoordinatesEntity(
+                        longitude = longitude,
+                        latitude = latitude
+                    )
                 else null,
                 isFavourite = false,
             )

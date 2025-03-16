@@ -12,8 +12,8 @@ class CityMapper @Inject constructor() {
         displayName = "${cityModel.name}, ${cityModel.country}",
         coordinates = if (cityModel.coordinates != null)
             Coordinates(
-                cityModel.coordinates!!.latitude,
-                cityModel.coordinates!!.longitude
+                longitude = cityModel.coordinates!!.longitude,
+                latitude = cityModel.coordinates!!.latitude
             ) else null,
         isFavourite = cityModel.isFavourite,
     )

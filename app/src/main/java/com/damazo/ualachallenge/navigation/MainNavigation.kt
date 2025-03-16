@@ -22,10 +22,10 @@ fun MainNavigation() {
                 onItemPressed = { city ->
                     navController.navigate(
                         route = Destination.CityMap(
-                            city.id,
-                            city.displayName,
-                            city.coordinates!!.latitude,
-                            city.coordinates!!.longitude,
+                            id = city.id,
+                            displayName = city.displayName,
+                            latitude = city.coordinates!!.latitude,
+                            longitude = city.coordinates!!.longitude,
                             city.isFavourite
                         )
                     )
@@ -39,7 +39,10 @@ fun MainNavigation() {
                 city = City(
                     city.id,
                     city.displayName,
-                    Coordinates(city.longitude, city.latitude),
+                    Coordinates(
+                        longitude = city.longitude,
+                        latitude = city.latitude
+                    ),
                     city.isFavourite
                 ),
                 onBackPressed = {
