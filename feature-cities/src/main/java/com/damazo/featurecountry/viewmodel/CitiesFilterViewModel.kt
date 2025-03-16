@@ -3,9 +3,12 @@ package com.damazo.featurecountry.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.damazo.domain.usecase.DownloadCitiesUseCase
+import com.damazo.domain.usecase.GetSavedCitiesUseCase
+import com.damazo.domain.usecase.SearchCitiesUseCase
+import com.damazo.featurecountry.mapper.CityMapper
 import com.damazo.featurecountry.model.CitiesFilterUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,40 +16,53 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CitiesFilterViewModel @Inject constructor(
-    val downloadCitiesUseCase: DownloadCitiesUseCase,
+    private val downloadCitiesUseCase: DownloadCitiesUseCase,
+    private val getSavedCitiesUseCase: GetSavedCitiesUseCase,
+    private val searchCitiesUseCase: SearchCitiesUseCase,
+    private val mapper: CityMapper,
 ) : ViewModel() {
 
-    private var _citiesFilterUiState:MutableStateFlow<CitiesFilterUiState> = MutableStateFlow(CitiesFilterUiState.Standby)
+    private var _citiesFilterUiState: MutableStateFlow<CitiesFilterUiState> =
+        MutableStateFlow(CitiesFilterUiState.Standby)
     val citiesFilterUiState: StateFlow<CitiesFilterUiState> = _citiesFilterUiState
 
-    init {
-        searchSavedData()
-    }
-
-    private fun searchSavedData(){
-        viewModelScope.launch {
-            _citiesFilterUiState.value = CitiesFilterUiState.DataFound
+    fun searchSavedData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = getSavedCitiesUseCase().map {
+                mapper.mapToUiModel(it)
+            }
+            if (response.isEmpty()) {
+                dataSourcePressed()
+            } else {
+                _citiesFilterUiState.value = CitiesFilterUiState.DataFound(response)
+            }
         }
     }
 
     fun dataSourcePressed() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _citiesFilterUiState.value = CitiesFilterUiState.Downloading
-            delay(3000)
-            //downloadCitiesUseCase()
-            _citiesFilterUiState.value = CitiesFilterUiState.DataFound
+            val response = downloadCitiesUseCase().map {
+                mapper.mapToUiModel(it)
+            }
+            if (response.isEmpty()) {
+                _citiesFilterUiState.value = CitiesFilterUiState.ErrorData
+            } else {
+                _citiesFilterUiState.value = CitiesFilterUiState.DataFound(response)
+            }
         }
     }
 
     fun filterCountries(text: String) {
-        _citiesFilterUiState.value = CitiesFilterUiState.Filtering
-        viewModelScope.launch {
-            _citiesFilterUiState.value = CitiesFilterUiState.SuccessfulFilter(
-                listOf(
-                    //Country(),
-                    //Country(),
-                    )
-            )
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = searchCitiesUseCase(text).map {
+                mapper.mapToUiModel(it)
+            }
+            if (response.isEmpty()) {
+                _citiesFilterUiState.value = CitiesFilterUiState.EmptyData
+            } else {
+                _citiesFilterUiState.value = CitiesFilterUiState.SuccessfulFilter(response)
+            }
         }
     }
 }

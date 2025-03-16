@@ -13,7 +13,7 @@ class CityMapper @Inject constructor() {
         id = cityEntity.id,
         name = cityEntity.name,
         country = cityEntity.country,
-        coordinate = if (cityEntity.coordinates != null)
+        coordinates = if (cityEntity.coordinates != null)
             Coordinates(
                 cityEntity.coordinates.latitude,
                 cityEntity.coordinates.longitude

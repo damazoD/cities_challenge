@@ -30,8 +30,11 @@ object DataSourceModule {
         val jsonFormat = Json { ignoreUnknownKeys = true }
         val convertFactory = jsonFormat.asConverterFactory(contentType)
 
-        return Retrofit.Builder().client(OkHttpClient.Builder().build())
-            .addConverterFactory(convertFactory).baseUrl(BuildConfig.API_BASE_URL).build()
+        return Retrofit.Builder()
+            .client(OkHttpClient.Builder().build())
+            .addConverterFactory(convertFactory)
+            .baseUrl(BuildConfig.API_BASE_URL)
+            .build()
     }
 
     @Provides

@@ -4,6 +4,6 @@ class City(
     val id: Long,
     val name: String,
     val country: String,
-    val coordinate: Coordinates?,
+    val coordinates: Coordinates?,
     val isFavourite: Boolean,
 )

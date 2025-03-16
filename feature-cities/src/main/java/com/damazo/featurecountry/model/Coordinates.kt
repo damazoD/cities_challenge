@@ -1,6 +1,6 @@
 package com.damazo.featurecountry.model
 
-data class Coordinate(
+data class Coordinates(
     val longitude: Double,
     val latitude: Double,
 )

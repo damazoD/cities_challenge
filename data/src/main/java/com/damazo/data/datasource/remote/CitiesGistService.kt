@@ -11,5 +11,5 @@ interface CitiesGistService {
     }
 
     @GET("${PATH_PREFIX}/cities.json")
-    suspend fun getAllCities(): Result<List<CityRemote>>
+    suspend fun getAllCities(): List<CityRemote>
 }

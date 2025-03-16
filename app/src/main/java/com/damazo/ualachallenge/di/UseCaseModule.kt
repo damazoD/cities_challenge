@@ -2,6 +2,7 @@ package com.damazo.ualachallenge.di
 
 import com.damazo.domain.repository.CitiesRepository
 import com.damazo.domain.usecase.DownloadCitiesUseCase
+import com.damazo.domain.usecase.GetSavedCitiesUseCase
 import com.damazo.domain.usecase.SaveFavouriteCityUseCase
 import com.damazo.domain.usecase.SearchCitiesUseCase
 import dagger.Module
@@ -26,5 +27,10 @@ object UseCaseModule {
     @Provides
     fun provideSearchCitiesUseCase(citiesRepository: CitiesRepository): SearchCitiesUseCase {
         return SearchCitiesUseCase(citiesRepository)
+    }
+
+    @Provides
+    fun provideGetSavedCitiesUseCase(citiesRepository: CitiesRepository): GetSavedCitiesUseCase {
+        return GetSavedCitiesUseCase(citiesRepository)
     }
 }

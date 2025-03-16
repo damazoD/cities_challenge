@@ -26,7 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.damazo.featurecountry.R
-import com.damazo.featurecountry.model.Coordinate
 import com.damazo.featurecountry.model.City
 
 @Composable
@@ -69,11 +68,12 @@ fun CountryItemView(city: City, onCountryPressed: (City) -> Unit) {
             )
             Text(
                 modifier = Modifier,
-                text = "${city.coordinate.latitude}, ${city.coordinate.longitude}",
+                text = city.displayCoordinates,
                 fontSize = 14.sp
             )
         }
-        val favouriteImage = R.drawable.heart.takeIf { city.isFavourite } ?: R.drawable.heart_outline
+        val favouriteImage =
+            R.drawable.heart.takeIf { city.isFavourite } ?: R.drawable.heart_outline
         Image(
             modifier = Modifier.size(24.dp),
             imageVector = ImageVector.vectorResource(favouriteImage),
@@ -89,22 +89,25 @@ fun SuccessfulFilterViewPreview() {
     SuccessfulFilterView(
         listOf(
             City(
-                "123",
+                id = 123,
                 displayName = "Mexico City, MX",
                 isFavourite = true,
-                coordinate = Coordinate(latitude = 34.283333, longitude = 44.549999)
+                displayCoordinates = "34.283333, 44.549999",
+                coordinates = null,
             ),
             City(
-                "123",
+                id = 123,
                 displayName = "Axutla, MX",
                 isFavourite = false,
-                coordinate = Coordinate(latitude = 34.283333, longitude = 44.549999)
+                displayCoordinates = "34.283333, 44.549999",
+                coordinates = null,
             ),
             City(
-                "123",
+                id = 123,
                 displayName = "El chinal, MX",
                 isFavourite = true,
-                coordinate = Coordinate(latitude = 34.283333, longitude = 44.549999)
+                displayCoordinates = "34.283333, 44.549999",
+                coordinates = null,
             ),
         )
     ) { _ -> }

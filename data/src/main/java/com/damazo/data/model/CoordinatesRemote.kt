@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class CoordinatesRemote(
+data class CoordinatesRemote(
     @SerialName("lon")
     val longitude: Double?,
     @SerialName("lat")

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class CityRemote(
+data class CityRemote(
     @SerialName("_id")
     val id: Long?,
     @SerialName("name")

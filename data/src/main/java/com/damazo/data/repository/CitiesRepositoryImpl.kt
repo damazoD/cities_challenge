@@ -14,16 +14,17 @@ class CitiesRepositoryImpl @Inject constructor(
 ) : CitiesRepository {
 
     override suspend fun downloadData(): List<City> {
-        val citiesEntity = remoteDataSource.getAllCities().getOrNull()?.mapNotNull {
-            mapper.mapToEntityModel(it)
-        }
-        return if (citiesEntity.isNullOrEmpty()) {
+        return try {
+            remoteDataSource.getAllCities()
+                .mapNotNull(mapper::mapToEntityModel)
+                .also { cities ->
+                    if (cities.isNotEmpty()) {
+                        localDataSource.insertAll(cities)
+                    }
+                }
+                .map(mapper::mapToDomainModel)
+        } catch (exception: Exception) {
             emptyList()
-        } else {
-            localDataSource.insertAll(citiesEntity)
-            citiesEntity.map {
-                mapper.mapToDomainModel(it)
-            }
         }
     }
 
