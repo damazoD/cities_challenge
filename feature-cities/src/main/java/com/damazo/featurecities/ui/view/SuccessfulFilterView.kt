@@ -30,8 +30,8 @@ import com.damazo.featurecities.model.City
 
 @Composable
 fun SuccessfulFilterView(
-    countries: List<City>,
-    onCountryPressed: (City) -> Unit
+    cities: List<City>,
+    onCityPressed: (City) -> Unit
 ) {
     LazyColumn(
         contentPadding = PaddingValues(24.dp),
@@ -41,9 +41,9 @@ fun SuccessfulFilterView(
             .fillMaxSize()
             .background(color = Color.White),
     ) {
-        items(count = countries.size) { index ->
-            CountryItemView(countries[index], onCountryPressed)
-            if (index < countries.lastIndex) {
+        items(count = cities.size) { index ->
+            CityItemView(cities[index], onCityPressed)
+            if (index < cities.lastIndex) {
                 HorizontalDivider()
             }
         }
@@ -51,7 +51,7 @@ fun SuccessfulFilterView(
 }
 
 @Composable
-fun CountryItemView(city: City, onCountryPressed: (City) -> Unit) {
+fun CityItemView(city: City, onCityPressed: (City) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -59,7 +59,9 @@ fun CountryItemView(city: City, onCountryPressed: (City) -> Unit) {
         Column(
             modifier = Modifier
                 .weight(1f)
-                .clickable { onCountryPressed(city) }
+                .clickable {
+                    if(city.coordinates != null) onCityPressed(city)
+                }
         ) {
             Text(
                 modifier = Modifier,

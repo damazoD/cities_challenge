@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
@@ -35,13 +36,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.damazo.featurecities.R
 import com.damazo.featurecities.model.CitiesFilterUiState.DataFound
 import com.damazo.featurecities.model.CitiesFilterUiState.Downloading
 import com.damazo.featurecities.model.CitiesFilterUiState.EmptyData
 import com.damazo.featurecities.model.CitiesFilterUiState.ErrorData
 import com.damazo.featurecities.model.CitiesFilterUiState.SuccessfulFilter
+import com.damazo.featurecities.model.City
 import com.damazo.featurecities.ui.view.DownloadProgressView
 import com.damazo.featurecities.ui.view.EmptyDataView
 import com.damazo.featurecities.ui.view.ErrorDataView
@@ -51,8 +53,8 @@ import com.damazo.featurecities.viewmodel.CitiesFilterViewModel
 @ExperimentalMaterial3Api
 @Composable
 fun CitiesFilterScreen(
-    modifier: Modifier,
-    viewModel: CitiesFilterViewModel = viewModel()
+    viewModel: CitiesFilterViewModel = hiltViewModel(),
+    onItemPressed: (City) -> Unit,
 ) {
     var textToSearch by rememberSaveable { mutableStateOf("") }
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -62,109 +64,113 @@ fun CitiesFilterScreen(
         viewModel.searchSavedData()
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .semantics { isTraversalGroup = true })
-    {
-        when (uiState) {
-            is ErrorData -> ErrorDataView()
-            is Downloading -> DownloadProgressView()
-            else -> {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    SearchBar(
-                        modifier = Modifier
-                            // .align(Alignment.TopCenter)
-                            .semantics { traversalIndex = 0f },
-                        inputField = {
-                            SearchBarDefaults.InputField(
-                                query = textToSearch,
-                                onQueryChange = {
-                                    textToSearch = it
-                                    viewModel.filterCountries(it)
-                                },
-                                onSearch = {
-                                    expanded = false
-                                },
-                                expanded = expanded,
-                                onExpandedChange = {
-                                    expanded = it
-                                },
-                                placeholder = {
-                                    Text(text = stringResource(R.string.filter_hint))
-                                },
-                                leadingIcon = {
-                                    val image = if (expanded) {
-                                        Icons.AutoMirrored.Filled.ArrowBack
-                                    } else {
-                                        Icons.Default.Search
-                                    }
-                                    Icon(
-                                        modifier = Modifier.clickable {
-                                            textToSearch = ""
-                                        },
-                                        imageVector = image,
-                                        contentDescription = null
-                                    )
-                                },
-                                trailingIcon = {
-                                    Icon(
-                                        modifier = Modifier.clickable {
-                                            textToSearch = ""
-                                        },
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = null
-                                    )
-                                },
-                            )
-                        },
-                        expanded = expanded,
-                        onExpandedChange = { expanded = it },
-                    ) {
-                        Column(
-                            modifier = Modifier.verticalScroll(rememberScrollState())
-                        ) {
-                            repeat(4) {
-                                val resultText = "Suggestion $it"
-                                ListItem(
-                                    headlineContent = { Text(resultText) },
-                                    supportingContent = { Text("Additional info") },
-                                    leadingContent = {
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .semantics { isTraversalGroup = true })
+        {
+            when (uiState) {
+                is ErrorData -> ErrorDataView()
+                is Downloading -> DownloadProgressView()
+                else -> {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        SearchBar(
+                            modifier = Modifier
+                                // .align(Alignment.TopCenter)
+                                .semantics { traversalIndex = 0f },
+                            inputField = {
+                                SearchBarDefaults.InputField(
+                                    query = textToSearch,
+                                    onQueryChange = {
+                                        textToSearch = it
+                                        viewModel.filterCountries(it)
+                                    },
+                                    onSearch = {
+                                        expanded = false
+                                    },
+                                    expanded = expanded,
+                                    onExpandedChange = {
+                                        expanded = it
+                                    },
+                                    placeholder = {
+                                        Text(text = stringResource(R.string.filter_hint))
+                                    },
+                                    leadingIcon = {
+                                        val image = if (expanded) {
+                                            Icons.AutoMirrored.Filled.ArrowBack
+                                        } else {
+                                            Icons.Default.Search
+                                        }
                                         Icon(
-                                            Icons.Filled.Star,
+                                            modifier = Modifier.clickable {
+                                                textToSearch = ""
+                                            },
+                                            imageVector = image,
                                             contentDescription = null
                                         )
                                     },
-                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                                    modifier = Modifier
-                                        .clickable {
-                                            textToSearch = resultText
-                                            expanded = false
-                                        }
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                                    trailingIcon = {
+                                        Icon(
+                                            modifier = Modifier.clickable {
+                                                textToSearch = ""
+                                            },
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = null
+                                        )
+                                    },
+                                )
+                            },
+                            expanded = expanded,
+                            onExpandedChange = { expanded = it },
+                        ) {
+                            Column(
+                                modifier = Modifier.verticalScroll(rememberScrollState())
+                            ) {
+                                repeat(4) {
+                                    val resultText = "Suggestion $it"
+                                    ListItem(
+                                        headlineContent = { Text(resultText) },
+                                        supportingContent = { Text("Additional info") },
+                                        leadingContent = {
+                                            Icon(
+                                                Icons.Filled.Star,
+                                                contentDescription = null
+                                            )
+                                        },
+                                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                        modifier = Modifier
+                                            .clickable {
+                                                textToSearch = resultText
+                                                expanded = false
+                                            }
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                                    )
+                                }
+                            }
+                        }
+                        when (uiState) {
+                            is DataFound -> {
+                                val data = (uiState as DataFound).countries
+                                SuccessfulFilterView(data, onItemPressed)
+                            }
+
+                            is EmptyData -> EmptyDataView()
+                            is SuccessfulFilter -> {
+                                SuccessfulFilterView(
+                                    (uiState as SuccessfulFilter).countries,
+                                    onItemPressed
                                 )
                             }
+
+                            else -> Unit
                         }
                     }
-                    when (uiState) {
-                        is DataFound -> {
-                            val data = (uiState as DataFound).countries
-                            SuccessfulFilterView(data) {
-                                //TODO(Change to MapScreen)
-                            }
-                        }
 
-                        is EmptyData -> EmptyDataView()
-                        is SuccessfulFilter ->
-                            SuccessfulFilterView((uiState as SuccessfulFilter).countries) {
-                                //TODO(Change to MapScreen)
-                            }
-
-                        else -> Unit
-                    }
                 }
-
             }
         }
     }
@@ -174,5 +180,5 @@ fun CitiesFilterScreen(
 @ExperimentalMaterial3Api
 @Composable
 fun CitiesFilterScreenPreview() {
-    CitiesFilterScreen(Modifier)
+    CitiesFilterScreen { }
 }
