@@ -9,10 +9,10 @@ import com.damazo.data.model.CityEntity
 @Dao
 interface CityDao {
 
-    @Query("SELECT * FROM city")
+    @Query("SELECT * FROM city ORDER BY name, country")
     suspend fun getAllCities(): List<CityEntity>
 
-    @Query("SELECT * FROM city WHERE name LIKE :prefix || '%' AND country LIKE :prefix || '%'")
+    @Query("SELECT * FROM city WHERE name LIKE :prefix || '%' OR country LIKE :prefix || '%' ORDER BY name, country")
     suspend fun searchBy(prefix: String): List<CityEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

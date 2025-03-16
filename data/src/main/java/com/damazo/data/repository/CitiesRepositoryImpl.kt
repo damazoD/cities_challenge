@@ -23,6 +23,7 @@ class CitiesRepositoryImpl @Inject constructor(
                     }
                 }
                 .map(mapper::mapToDomainModel)
+                .sortedWith(compareBy({ it.name.lowercase() }, { it.country.lowercase() }))
         } catch (exception: Exception) {
             emptyList()
         }
