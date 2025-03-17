@@ -33,8 +33,14 @@ class CitiesRepositoryImpl @Inject constructor(
         mapper.mapToDomainModel(it)
     }
 
-    override suspend fun searchCities(prefix: String) = localDataSource.searchBy(prefix).map {
-        mapper.mapToDomainModel(it)
+    override suspend fun searchCities(prefix: String, onlyFavourites: Boolean): List<City> {
+        return if (onlyFavourites) {
+            localDataSource.searchFavouritesBy(prefix)
+        } else {
+            localDataSource.searchBy(prefix)
+        }.map {
+            mapper.mapToDomainModel(it)
+        }
     }
 
     override suspend fun saveFavourite(cityId: Long, isFavourite: Boolean) {

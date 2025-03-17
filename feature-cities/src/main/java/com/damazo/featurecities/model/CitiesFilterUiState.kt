@@ -6,6 +6,5 @@ sealed class CitiesFilterUiState {
     data object Loading : CitiesFilterUiState()
     data object EmptyData : CitiesFilterUiState()
     data object ErrorData : CitiesFilterUiState()
-    data class DataFound(val countries: List<City>) : CitiesFilterUiState()
     data class SuccessfulFilter(val countries: List<City>) : CitiesFilterUiState()
 }

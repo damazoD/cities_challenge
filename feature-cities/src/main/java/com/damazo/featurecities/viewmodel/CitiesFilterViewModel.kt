@@ -7,6 +7,7 @@ import com.damazo.domain.usecase.GetSavedCitiesUseCase
 import com.damazo.domain.usecase.SearchCitiesUseCase
 import com.damazo.featurecities.mapper.CityMapper
 import com.damazo.featurecities.model.CitiesFilterUiState
+import com.damazo.featurecities.model.City
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,9 @@ class CitiesFilterViewModel @Inject constructor(
         MutableStateFlow(CitiesFilterUiState.Standby)
     val citiesFilterUiState: StateFlow<CitiesFilterUiState> = _citiesFilterUiState
 
+    private var _allCities: MutableStateFlow<List<City>> = MutableStateFlow(emptyList())
+    val allCities: StateFlow<List<City>> = _allCities
+
     fun searchSavedData() {
         _citiesFilterUiState.value = CitiesFilterUiState.Loading
         viewModelScope.launch(Dispatchers.IO) {
@@ -35,7 +39,8 @@ class CitiesFilterViewModel @Inject constructor(
             if (response.isEmpty()) {
                 downloadData()
             } else {
-                _citiesFilterUiState.value = CitiesFilterUiState.DataFound(response)
+                _allCities.value = response
+                _citiesFilterUiState.value = CitiesFilterUiState.Standby
             }
         }
     }
@@ -49,14 +54,15 @@ class CitiesFilterViewModel @Inject constructor(
             if (response.isEmpty()) {
                 _citiesFilterUiState.value = CitiesFilterUiState.ErrorData
             } else {
-                _citiesFilterUiState.value = CitiesFilterUiState.DataFound(response)
+                _allCities.value = response
+                _citiesFilterUiState.value = CitiesFilterUiState.Standby
             }
         }
     }
 
-    fun filterCountries(text: String) {
+    fun filterCountries(text: String, onlyFavourites: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = searchCitiesUseCase(text).map {
+            val response = searchCitiesUseCase(text, onlyFavourites).map {
                 mapper.mapToUiModel(it)
             }
             if (response.isEmpty()) {

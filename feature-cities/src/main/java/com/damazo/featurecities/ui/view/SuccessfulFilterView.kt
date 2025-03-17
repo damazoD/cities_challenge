@@ -38,7 +38,7 @@ import com.damazo.featurecities.model.City
 import com.damazo.featurecities.model.Coordinates
 
 @Composable
-fun SuccessfulFilterView(
+fun ListCitiesView(
     cities: List<City>,
     onCityPressed: (City) -> Unit
 ) {
@@ -115,8 +115,8 @@ fun CityItemView(city: City, onCityPressed: (City) -> Unit) {
 
 @Preview
 @Composable
-fun SuccessfulFilterViewPreview() {
-    SuccessfulFilterView(
+private fun SuccessfulFilterViewPreview() {
+    ListCitiesView(
         listOf(
             City(
                 id = 123,

@@ -15,6 +15,9 @@ interface CityDao {
     @Query("SELECT * FROM city WHERE name LIKE :prefix || '%' OR country LIKE :prefix || '%' ORDER BY name, country")
     suspend fun searchBy(prefix: String): List<CityEntity>
 
+    @Query("SELECT * FROM city WHERE isFavourite AND (name LIKE :prefix || '%' OR country LIKE :prefix || '%') ORDER BY name, country")
+    suspend fun searchFavouritesBy(prefix: String): List<CityEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(cities: List<CityEntity>)
 

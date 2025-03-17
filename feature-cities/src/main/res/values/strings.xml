@@ -6,6 +6,7 @@
     <string name="alert_cancel">Cancelar</string>
 
     <string name="filter_hint">Buscar ciudad</string>
+    <string name="filter_favourites">Solo favoritos</string>
 
     <string name="empty_tile">Sin resultados</string>
     <string name="empty_description">No se encontraron coincidencias. Intenta con otra búsqueda.</string>
