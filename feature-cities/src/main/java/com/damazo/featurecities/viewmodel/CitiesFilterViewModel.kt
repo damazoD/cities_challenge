@@ -9,6 +9,7 @@ import com.damazo.featurecities.mapper.CityMapper
 import com.damazo.featurecities.model.CitiesFilterUiState
 import com.damazo.featurecities.model.City
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +22,7 @@ class CitiesFilterViewModel @Inject constructor(
     private val getSavedCitiesUseCase: GetSavedCitiesUseCase,
     private val searchCitiesUseCase: SearchCitiesUseCase,
     private val mapper: CityMapper,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
 
     private var _citiesFilterUiState: MutableStateFlow<CitiesFilterUiState> =
@@ -32,7 +34,7 @@ class CitiesFilterViewModel @Inject constructor(
 
     fun searchSavedData() {
         _citiesFilterUiState.value = CitiesFilterUiState.Loading
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             val response = getSavedCitiesUseCase().map {
                 mapper.mapToUiModel(it)
             }
@@ -46,7 +48,7 @@ class CitiesFilterViewModel @Inject constructor(
     }
 
     fun downloadData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             _citiesFilterUiState.value = CitiesFilterUiState.Downloading
             val response = downloadCitiesUseCase().map {
                 mapper.mapToUiModel(it)
@@ -61,7 +63,7 @@ class CitiesFilterViewModel @Inject constructor(
     }
 
     fun filterCountries(text: String, onlyFavourites: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             val response = searchCitiesUseCase(text, onlyFavourites).map {
                 mapper.mapToUiModel(it)
             }
