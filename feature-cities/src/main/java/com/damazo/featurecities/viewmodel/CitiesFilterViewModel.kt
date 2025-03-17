@@ -27,19 +27,20 @@ class CitiesFilterViewModel @Inject constructor(
     val citiesFilterUiState: StateFlow<CitiesFilterUiState> = _citiesFilterUiState
 
     fun searchSavedData() {
+        _citiesFilterUiState.value = CitiesFilterUiState.Loading
         viewModelScope.launch(Dispatchers.IO) {
             val response = getSavedCitiesUseCase().map {
                 mapper.mapToUiModel(it)
             }
             if (response.isEmpty()) {
-                dataSourcePressed()
+                downloadData()
             } else {
                 _citiesFilterUiState.value = CitiesFilterUiState.DataFound(response)
             }
         }
     }
 
-    fun dataSourcePressed() {
+    fun downloadData() {
         viewModelScope.launch(Dispatchers.IO) {
             _citiesFilterUiState.value = CitiesFilterUiState.Downloading
             val response = downloadCitiesUseCase().map {

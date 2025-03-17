@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="alert_continue">Continuar</string>
+    <string name="app_name">Cities challenge</string>
+
+    <string name="alert_continue">Descargar</string>
     <string name="alert_cancel">Cancelar</string>
 
-    <string name="filter_hint">Buscar</string>
+    <string name="filter_hint">Buscar ciudad</string>
 
-    <string name="empty_tile">Sin coincidencias</string>
-    <string name="empty_description">Lo sentimos, no se encontró nunguna coincidencia, intenta con otra busqueda</string>
+    <string name="empty_tile">Sin resultados</string>
+    <string name="empty_description">No se encontraron coincidencias. Intenta con otra búsqueda.</string>
 
-    <string name="error_tile">Lo sentimos</string>
-    <string name="error_description">Ocurrió un error con la descarga de la información, intenta más tarde</string>
+    <string name="error_tile">Error</string>
+    <string name="error_description">No se pudo descargar la información. Intenta más tarde.</string>
 
-    <string name="download_tile">Descarga en proceso</string>
-    <string name="download_description">Esto puede demorar unos segundos</string>
-    <string name="download_alert_title">Actualizar datos locales</string>
-    <string name="download_alert_description">Estás por actualizar los datos que están almacenados en el dispositivo, al hacerlo se borrarán los favoritos guardados</string>
+    <string name="download_tile">Descargando...</string>
+    <string name="download_description">Esto puede tardar unos segundos</string>
+    <string name="download_alert_title">¿Desea actualizar los registros?</string>
+    <string name="download_alert_description">Se reemplazarán los datos almacenados y se eliminarán los favoritos guardados.</string>
 
     <string name="data_found_description">La aplicación cuenta con datos guardados, cualquier busqueda será local</string>
-    <string name="data_download_button">Descargar nuevamente</string>
+    <string name="data_download_button">Descargar de nuevo</string>
 
     <string name="maps_back_button_description">Regreso a la lista de ciudades</string>
     <string name="maps_favourite_button_description">Guardar como favorito</string>
+    <string name="cities_download_button_description">Descargar de nuevo la información</string>
 </resources>

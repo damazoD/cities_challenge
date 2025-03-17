@@ -1,26 +1,30 @@
 package com.damazo.featurecities.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarColors
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -42,6 +47,7 @@ import com.damazo.featurecities.model.CitiesFilterUiState.DataFound
 import com.damazo.featurecities.model.CitiesFilterUiState.Downloading
 import com.damazo.featurecities.model.CitiesFilterUiState.EmptyData
 import com.damazo.featurecities.model.CitiesFilterUiState.ErrorData
+import com.damazo.featurecities.model.CitiesFilterUiState.Loading
 import com.damazo.featurecities.model.CitiesFilterUiState.SuccessfulFilter
 import com.damazo.featurecities.model.City
 import com.damazo.featurecities.ui.view.DownloadProgressView
@@ -57,30 +63,70 @@ fun CitiesFilterScreen(
     onItemPressed: (City) -> Unit,
 ) {
     var textToSearch by rememberSaveable { mutableStateOf("") }
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    var isSearchBarExpanded by rememberSaveable { mutableStateOf(false) }
+    var isWarningDialogVisible by rememberSaveable { mutableStateOf(false) }
     val uiState by viewModel.citiesFilterUiState.collectAsState()
+
 
     LaunchedEffect(Unit) {
         viewModel.searchSavedData()
     }
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
+    Scaffold(
+        topBar = {
+            if (!isSearchBarExpanded) {
+                TopAppBar(
+                    title = {
+                        Text(text = stringResource(R.string.app_name))
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    actions = {
+                        IconButton(onClick = {
+                            isWarningDialogVisible = true
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = stringResource(R.string.cities_download_button_description),
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    }
+                )
+            }
+        }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
-                .semantics { isTraversalGroup = true })
-        {
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
+                .semantics { isTraversalGroup = true }
+                .background(Color.Transparent)
+        ) {
             when (uiState) {
                 is ErrorData -> ErrorDataView()
                 is Downloading -> DownloadProgressView()
+                is Loading -> CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(75.dp)
+                        .align(Alignment.Center)
+                )
+
                 else -> {
-                    Column(modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                         SearchBar(
                             modifier = Modifier
-                                // .align(Alignment.TopCenter)
+                                .align(Alignment.CenterHorizontally)
                                 .semantics { traversalIndex = 0f },
+                            colors = SearchBarColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                dividerColor = MaterialTheme.colorScheme.primary,
+                            ),
                             inputField = {
                                 SearchBarDefaults.InputField(
                                     query = textToSearch,
@@ -89,24 +135,24 @@ fun CitiesFilterScreen(
                                         viewModel.filterCountries(it)
                                     },
                                     onSearch = {
-                                        expanded = false
+                                        isSearchBarExpanded = false
                                     },
-                                    expanded = expanded,
+                                    expanded = isSearchBarExpanded,
                                     onExpandedChange = {
-                                        expanded = it
+                                        isSearchBarExpanded = it
                                     },
                                     placeholder = {
                                         Text(text = stringResource(R.string.filter_hint))
                                     },
                                     leadingIcon = {
-                                        val image = if (expanded) {
+                                        val image = if (isSearchBarExpanded) {
                                             Icons.AutoMirrored.Filled.ArrowBack
                                         } else {
                                             Icons.Default.Search
                                         }
                                         Icon(
                                             modifier = Modifier.clickable {
-                                                textToSearch = ""
+                                                isSearchBarExpanded = false
                                             },
                                             imageVector = image,
                                             contentDescription = null
@@ -123,34 +169,15 @@ fun CitiesFilterScreen(
                                     },
                                 )
                             },
-                            expanded = expanded,
-                            onExpandedChange = { expanded = it },
+                            expanded = isSearchBarExpanded,
+                            onExpandedChange = { isSearchBarExpanded = it },
                         ) {
-                            Column(
-                                modifier = Modifier.verticalScroll(rememberScrollState())
-                            ) {
-                                repeat(4) {
-                                    val resultText = "Suggestion $it"
-                                    ListItem(
-                                        headlineContent = { Text(resultText) },
-                                        supportingContent = { Text("Additional info") },
-                                        leadingContent = {
-                                            Icon(
-                                                Icons.Filled.Star,
-                                                contentDescription = null
-                                            )
-                                        },
-                                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                                        modifier = Modifier
-                                            .clickable {
-                                                textToSearch = resultText
-                                                expanded = false
-                                            }
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                                    )
-                                }
+
+                            (uiState as? SuccessfulFilter)?.countries?.let { data ->
+                                SuccessfulFilterView(data, onItemPressed)
                             }
+
+
                         }
                         when (uiState) {
                             is DataFound -> {
@@ -171,6 +198,17 @@ fun CitiesFilterScreen(
                     }
 
                 }
+            }
+            if (isWarningDialogVisible) {
+                DownloadWarningDialog(
+                    onConfirmation = {
+                        isWarningDialogVisible = false
+                        viewModel.downloadData()
+                    },
+                    onCancel = {
+                        isWarningDialogVisible = false
+                    }
+                )
             }
         }
     }
