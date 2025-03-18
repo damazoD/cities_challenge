@@ -1,5 +1,6 @@
 package com.damazo.featurecities.ui.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,11 +32,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -55,6 +59,7 @@ import com.damazo.featurecities.ui.view.DownloadProgressView
 import com.damazo.featurecities.ui.view.EmptyDataView
 import com.damazo.featurecities.ui.view.ErrorDataView
 import com.damazo.featurecities.ui.view.ListCitiesView
+import com.damazo.featurecities.ui.view.MapView
 import com.damazo.featurecities.viewmodel.CitiesFilterViewModel
 
 @ExperimentalMaterial3Api
@@ -63,6 +68,10 @@ fun CitiesFilterScreen(
     viewModel: CitiesFilterViewModel = hiltViewModel(),
     onItemPressed: (City) -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    var selectedCity by remember { mutableStateOf<City?>(null) }
+    var cityPosition by rememberSaveable { mutableIntStateOf(0) }
     var textToSearch by rememberSaveable { mutableStateOf("") }
     var isSearchBarExpanded by rememberSaveable { mutableStateOf(false) }
     var isWarningDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -71,7 +80,18 @@ fun CitiesFilterScreen(
     val allCities by viewModel.allCities.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.searchSavedData()
+        if (allCities.isEmpty()) {
+            viewModel.searchSavedData()
+        }
+    }
+
+    fun customItemPressed(city: City, position: Int) {
+        cityPosition = position
+        if (isLandscape) {
+            selectedCity = city
+        } else {
+            onItemPressed(city)
+        }
     }
 
     Scaffold(
@@ -98,100 +118,114 @@ fun CitiesFilterScreen(
                 )
 
                 else -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        SearchBar(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .semantics { traversalIndex = 0f },
-                            colors = SearchBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                dividerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            inputField = {
-                                SearchBarDefaults.InputField(
-                                    query = textToSearch,
-                                    onQueryChange = {
-                                        textToSearch = it
-                                        viewModel.filterCountries(it, favouritesOnlyFilter)
-                                    },
-                                    onSearch = {
-                                        isSearchBarExpanded = false
-                                    },
-                                    expanded = isSearchBarExpanded,
-                                    onExpandedChange = {
-                                        isSearchBarExpanded = it
-                                        if (isSearchBarExpanded.not()) {
-                                            textToSearch = ""
-                                        }
-                                    },
-                                    placeholder = {
-                                        Text(text = stringResource(R.string.filter_hint))
-                                    },
-                                    leadingIcon = {
-                                        LeadingIcon(isSearchBarExpanded) {
-                                            isSearchBarExpanded = false
-                                            textToSearch = ""
-                                        }
-                                    },
-                                    trailingIcon = {
-                                        if (isSearchBarExpanded) {
-                                            TrailingIcon(
-                                                textToSearch = textToSearch,
-                                                isChecked = favouritesOnlyFilter,
-                                                onIconClicked = {
-                                                    textToSearch = ""
-                                                },
-                                                onCheckedChange = { checked ->
-                                                    favouritesOnlyFilter = checked
-                                                    viewModel.filterCountries(
-                                                        textToSearch,
-                                                        favouritesOnlyFilter
-                                                    )
-                                                })
-                                        }
-                                    },
-                                )
-                            },
-                            expanded = isSearchBarExpanded,
-                            onExpandedChange = {
-                                isSearchBarExpanded = it
-                            },
+                    Row(modifier = Modifier.fillMaxSize()) {
+                        Column(
+                            modifier = Modifier.weight(1f)
                         ) {
-                            when (uiState) {
-                                is SuccessfulFilter -> {
-                                    ListCitiesView(
-                                        (uiState as SuccessfulFilter).countries,
-                                        onItemPressed
+                            SearchBar(
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .semantics { traversalIndex = 0f },
+                                colors = SearchBarColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    dividerColor = MaterialTheme.colorScheme.primary,
+                                ),
+                                inputField = {
+                                    SearchBarDefaults.InputField(
+                                        query = textToSearch,
+                                        onQueryChange = {
+                                            textToSearch = it
+                                            viewModel.filterCountries(it, favouritesOnlyFilter)
+                                        },
+                                        onSearch = {
+                                            isSearchBarExpanded = false
+                                        },
+                                        expanded = isSearchBarExpanded,
+                                        onExpandedChange = {
+                                            isSearchBarExpanded = it
+                                            if (isSearchBarExpanded.not()) {
+                                                textToSearch = ""
+                                            }
+                                        },
+                                        placeholder = {
+                                            Text(text = stringResource(R.string.filter_hint))
+                                        },
+                                        leadingIcon = {
+                                            LeadingIcon(isSearchBarExpanded) {
+                                                isSearchBarExpanded = false
+                                                textToSearch = ""
+                                            }
+                                        },
+                                        trailingIcon = {
+                                            if (isSearchBarExpanded) {
+                                                TrailingIcon(
+                                                    textToSearch = textToSearch,
+                                                    isChecked = favouritesOnlyFilter,
+                                                    onIconClicked = {
+                                                        textToSearch = ""
+                                                    },
+                                                    onCheckedChange = { checked ->
+                                                        favouritesOnlyFilter = checked
+                                                        viewModel.filterCountries(
+                                                            textToSearch,
+                                                            favouritesOnlyFilter
+                                                        )
+                                                    })
+                                            }
+                                        },
                                     )
+                                },
+                                expanded = isSearchBarExpanded,
+                                onExpandedChange = {
+                                    isSearchBarExpanded = it
+                                },
+                            ) {
+                                when (uiState) {
+                                    is SuccessfulFilter -> {
+                                        ListCitiesView(
+                                            (uiState as SuccessfulFilter).countries,
+                                            ::customItemPressed
+                                        )
+                                    }
+
+                                    is EmptyData -> EmptyDataView()
+
+                                    else -> Unit
                                 }
-
-                                is EmptyData -> EmptyDataView()
-
-                                else -> Unit
+                            }
+                            if (allCities.isNotEmpty()) {
+                                ListCitiesView(
+                                    allCities,
+                                    ::customItemPressed
+                                )
                             }
                         }
-                        if (allCities.isNotEmpty()) {
-                            ListCitiesView(
-                                allCities,
-                                onItemPressed
+                        if (isLandscape && selectedCity != null) {
+                            MapView(
+                                modifier = Modifier.weight(1f),
+                                city = selectedCity!!,
+                                onCloseCallback = {
+                                    selectedCity = null
+                                },
+                                onFavouriteCallback = { isFavourite ->
+                                    viewModel.updateCityItem(cityPosition, isFavourite)
+                                }
                             )
                         }
                     }
                 }
             }
-            if (isWarningDialogVisible) {
-                DownloadWarningDialog(
-                    onConfirmation = {
-                        isWarningDialogVisible = false
-                        viewModel.downloadData()
-                    },
-                    onCancel = {
-                        isWarningDialogVisible = false
-                    }
-                )
-            }
+        }
+        if (isWarningDialogVisible) {
+            DownloadWarningDialog(
+                onConfirmation = {
+                    isWarningDialogVisible = false
+                    viewModel.downloadData()
+                },
+                onCancel = {
+                    isWarningDialogVisible = false
+                }
+            )
         }
     }
 }

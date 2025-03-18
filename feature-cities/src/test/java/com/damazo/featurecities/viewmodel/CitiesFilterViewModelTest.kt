@@ -142,4 +142,17 @@ class CitiesFilterViewModelTestTest {
 
         assertEquals(CitiesFilterUiState.EmptyData, viewModel.citiesFilterUiState.value)
     }
+
+    @Test
+    fun `should return the same list with the updated value`() = runTest {
+        whenever(getSavedCitiesUseCase())
+            .thenReturn(fakeCities)
+        viewModel.searchSavedData()
+
+        val index = 1
+        val valueToChange = fakeCities[1].isFavourite.not()
+        viewModel.updateCityItem(index, valueToChange)
+
+        assertEquals(valueToChange, viewModel.allCities.value[1].isFavourite)
+    }
 }

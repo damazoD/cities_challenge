@@ -10,7 +10,6 @@ import com.damazo.featurecities.model.CitiesFilterUiState
 import com.damazo.featurecities.model.City
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -22,7 +21,7 @@ class CitiesFilterViewModel @Inject constructor(
     private val getSavedCitiesUseCase: GetSavedCitiesUseCase,
     private val searchCitiesUseCase: SearchCitiesUseCase,
     private val mapper: CityMapper,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private var _citiesFilterUiState: MutableStateFlow<CitiesFilterUiState> =
@@ -72,6 +71,12 @@ class CitiesFilterViewModel @Inject constructor(
             } else {
                 _citiesFilterUiState.value = CitiesFilterUiState.SuccessfulFilter(response)
             }
+        }
+    }
+
+    fun updateCityItem(index: Int, isFavourite: Boolean) {
+        _allCities.value = _allCities.value.mapIndexed { i, city ->
+            if (i == index) city.copy(isFavourite = isFavourite) else city
         }
     }
 }

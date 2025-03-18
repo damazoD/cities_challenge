@@ -40,7 +40,7 @@ import com.damazo.featurecities.model.Coordinates
 @Composable
 fun ListCitiesView(
     cities: List<City>,
-    onCityPressed: (City) -> Unit
+    onCityPressed: (City, Int) -> Unit
 ) {
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
@@ -50,11 +50,13 @@ fun ListCitiesView(
             .fillMaxSize()
     ) {
         items(count = cities.size) { index ->
-            CityItemView(cities[index], onCityPressed)
+            CityItemView(cities[index]) {
+                onCityPressed(cities[index], index)
+            }
             if (index < cities.lastIndex) {
                 HorizontalDivider(
                     modifier = Modifier.padding(top = 6.dp),
-                    )
+                )
             }
         }
     }
@@ -137,5 +139,5 @@ private fun SuccessfulFilterViewPreview() {
                 coordinates = Coordinates(34.283333, 44.549999),
             ),
         )
-    ) { _ -> }
+    ) { _, _ -> }
 }
