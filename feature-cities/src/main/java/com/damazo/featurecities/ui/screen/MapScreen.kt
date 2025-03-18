@@ -73,11 +73,15 @@ fun CityMapScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                isFavourite = !isFavourite
-                viewModel.saveFavouriteCity(city.id, isFavourite)
-            }) {
-                val favouriteIcon = R.drawable.heart.takeIf { isFavourite } ?: R.drawable.heart_outline
+            FloatingActionButton(
+                onClick = {
+                    isFavourite = !isFavourite
+                    viewModel.saveFavouriteCity(city.id, isFavourite)
+                },
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+            ) {
+                val favouriteIcon =
+                    R.drawable.heart.takeIf { isFavourite } ?: R.drawable.heart_outline
                 Icon(
                     imageVector = ImageVector.vectorResource(favouriteIcon),
                     contentDescription = stringResource(R.string.maps_favourite_button_description),

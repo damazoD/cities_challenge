@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.ExperimentalMaterial3Api
 import com.damazo.ualachallenge.navigation.MainNavigation
-import com.damazo.ualachallenge.ui.theme.UalaChallengeTheme
+import com.damazo.ualachallenge.ui.theme.ChallengeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterial3Api
@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            UalaChallengeTheme {
+            ChallengeTheme {
                 MainNavigation()
             }
         }

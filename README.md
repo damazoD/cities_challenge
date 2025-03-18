@@ -20,8 +20,6 @@
 
 ## Pending or Improvements
 
-* **Theme Customization:** A configuration file could be implemented to allow customization of the app's theme, 
-    such as defining a custom color palette. Currently, the app uses Material Design colors.
 * **Dimens:** A strategy should be created to handle dimensions for different device types. This could be done 
     using the traditional approach (via dimens.xml) or by implementing a Kotlin class that adjusts dimensions based on screen density.
 * **UI Testing:** Unit tests were implemented for ViewModels, mappers, and repositories, but UI tests are still pending.

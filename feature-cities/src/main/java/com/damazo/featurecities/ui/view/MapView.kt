@@ -92,7 +92,7 @@ fun MapView(
                 .align(Alignment.BottomCenter)
                 .padding(10.dp)
                 .clip(RoundedCornerShape(15))
-                .background(color = MaterialTheme.colorScheme.primaryContainer)
+                .background(color = MaterialTheme.colorScheme.tertiaryContainer)
                 .padding(2.dp),
             onClick = {
                 isFavourite = !isFavourite

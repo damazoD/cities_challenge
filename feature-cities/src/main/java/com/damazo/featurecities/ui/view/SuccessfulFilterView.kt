@@ -76,12 +76,12 @@ fun CityItemView(city: City, onCityPressed: (City) -> Unit) {
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
+                .background(MaterialTheme.colorScheme.tertiaryContainer),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = city.displayName.takeLast(2).uppercase(),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.tertiary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
