@@ -93,6 +93,12 @@ fun CitiesFilterScreen(
             onItemPressed(city)
         }
     }
+    val onExpandedChange: (Boolean) -> Unit = {
+        isSearchBarExpanded = it
+        if (isSearchBarExpanded.not()) {
+            textToSearch = ""
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -141,12 +147,7 @@ fun CitiesFilterScreen(
                                             isSearchBarExpanded = false
                                         },
                                         expanded = isSearchBarExpanded,
-                                        onExpandedChange = {
-                                            isSearchBarExpanded = it
-                                            if (isSearchBarExpanded.not()) {
-                                                textToSearch = ""
-                                            }
-                                        },
+                                        onExpandedChange = onExpandedChange,
                                         placeholder = {
                                             Text(text = stringResource(R.string.filter_hint))
                                         },
@@ -176,9 +177,7 @@ fun CitiesFilterScreen(
                                     )
                                 },
                                 expanded = isSearchBarExpanded,
-                                onExpandedChange = {
-                                    isSearchBarExpanded = it
-                                },
+                                onExpandedChange = onExpandedChange,
                             ) {
                                 when (uiState) {
                                     is SuccessfulFilter -> {
